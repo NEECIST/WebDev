@@ -1,0 +1,179 @@
+{
+    "results": [
+        {
+            "question":"Quando foi a 1ª edição das JEECs?",
+            "correct_answer":"2000",
+            "incorrect_answers":["1999","2003","2001"]
+        },
+        {
+            "question":"Quantos episódios das NEECtalks existem?",
+            "correct_answer":"9",
+            "incorrect_answers":["8","7","10"]
+        },
+        {
+            "question":"Qual destes não é um dos workshops do NEEC?",
+            "correct_answer":"R",
+            "incorrect_answers":["Python","Matlab","Arduino"]
+        },
+        {
+            "question":"Quantos membros tem o NEEC?",
+            "correct_answer":"21",
+            "incorrect_answers":["15","17","23"]
+        },
+        {
+            "question":"Quantas áreas de Mestrado existem em MEEC?",
+            "correct_answer":"5",
+            "incorrect_answers":["4","8","7"]
+        },
+        {
+            "question":"Anualmente quantas vagas há em MEEC?",
+            "correct_answer":"250",
+            "incorrect_answers":["220","230","240"]
+        },
+        {
+            "question":"Quando é que foi inventado o MOSFET?",
+            "correct_answer":"1947",
+            "incorrect_answers":["1975","1954","1987"]
+        },
+        {
+            "question": "Quem é que inventou o Linux?",
+            "correct_answer": "Linus Torvald",
+            "incorrect_answers": ["Steve Jobs","Gil Eanes","Garry Larson"]
+        },
+        {
+            "question": "Quem foi o 1º/ª convidado/a das NEECtalks?",
+            "correct_answer": "Catarina Silva",
+            "incorrect_answers": ["Núcleo de Jogos do IST","Carlos e Espadinha","Rui Figueiredo"]
+        },
+        {
+            "question": "Quantos campi do ist existem?",
+            "correct_answer": "3",
+            "incorrect_answers": ["2","4","10"]
+        },
+        {
+            "question": "Qual é o comando que deves fazer para autenticar no discord de meec?",
+            "correct_answer": "!cadeiras",
+            "incorrect_answers": ["!registar","!register","!authenticate"]
+        },
+        {
+            "question": "Qual a legenda da estatua em frente da torre norte?",
+            "correct_answer": "Engenharia",
+            "incorrect_answers": ["Estátua","Eletricidade","Deusa do Conhecimento"]
+        },
+        {
+            "question": "Que cientista famoso aparecia no logo original da apple?",
+            "correct_answer": "Newton",
+            "incorrect_answers": ["Einstein","Maxwell","Feynman"]
+        },
+        {
+            "question": "Qual é a sala da sede do NEEC?",
+            "correct_answer": "4.12",
+            "incorrect_answers": ["4.24","4.25","3.13"]
+        },
+        {
+            "question": "Qual é a estação de metro mais perto do pavilhao central?",
+            "correct_answer": "Alameda",
+            "incorrect_answers": ["Saldanha","Arroios","Oriente"]
+        },
+        {
+            "question": "Quantos pavilhoes tem o Técnico?",
+            "correct_answer": "23",
+            "incorrect_answers": ["2","10","32"]
+        },
+        {
+            "question": "como se chama a mascote do NEEC?",
+            "correct_answer": "NEECbot",
+            "incorrect_answers": ["NEECo","Cãopitão NEEC","NEECachu"]
+        },
+        {
+            "question": "Quantos degraus tem a escada à entrada da torre norte?",
+            "correct_answer": "19",
+            "incorrect_answers": ["3","25","17"]
+        },
+        {
+            "question": "Qual a maior sala do campus Alameda?",
+            "correct_answer": "Salão Nobre",
+            "incorrect_answers": ["QA","GA5","Centro de Congressos"]
+        },
+        {
+            "question": "Quem foi o 2º/ª convidado/a das NEECtalks?",
+            "correct_answer": "Núcleo de Jogos do IST",
+            "incorrect_answers": ["Catarina Silva","João Caldas","TSB"]
+        },
+        {
+            "question": "Qual o nº de lugares de estacionamento no campus da alameda?",
+            "correct_answer": "70",
+            "incorrect_answers": ["120","90","3"]
+        },
+        {
+            "question": "Como se chama a casa no jardim em frente da torre norte?",
+            "correct_answer": "ciist",
+            "incorrect_answers": ["casa do pasto","perdidos e achados","serviços secretos"]
+        },
+        {
+            "question": "Qual a lotação oficial das salas de estudo de Civil??",
+            "correct_answer": "0",
+            "incorrect_answers": ["20","24","18"]
+        },
+        {
+            "question": "Quantos pisos tem o Pavilhão de Civil?",
+            "correct_answer": "8",
+            "incorrect_answers": ["7","9","6"]
+        },
+        {
+            "question": "Quantos pisos tem a torre norte?",
+            "correct_answer": "16",
+            "incorrect_answers": ["12","11","10"]
+        },
+        {
+            "question": "Quantos créditos tem a Licenciatura?",
+            "correct_answer": "180",
+            "incorrect_answers": ["184.5","240","120"]
+        },
+        {
+            "question": "Quem foi o 3º/ª convidado/a das NEECtalks?",
+            "correct_answer": "Miguel de Moura",
+            "incorrect_answers": ["Núcleo de Jogos do IST","Catarina Silva","Rui Figueiredo"]
+        },
+        {
+            "question": "Como se chamam as equipas a qual te podes juntar na app das JEECs?",
+            "correct_answer": "squads",
+            "incorrect_answers": ["teams","equipas","amigos"]
+        },
+        {
+            "question": "Qual é o tema da última NEECuriosity?",
+            "correct_answer": "Galáxias",
+            "incorrect_answers": ["Energia nuclear","Ciber segurança","Sonda maven"]
+        },
+        {
+            "question": "Quem foi o 4º/ª convidado/a das NEECtalks?",
+            "correct_answer": "Carlos e Espadinha",
+            "incorrect_answers": ["Pedro Machado","João Caldas","Rui Figueiredo"]
+        },
+        {
+            "question": "Quantos pontos são necessários para ganhar uma caneta das JEECs?",
+            "correct_answer": "300",
+            "incorrect_answers": ["250","100","150"]
+        },
+        {
+            "question": "Em que ano nasceu Michael Faraday?",
+            "correct_answer": "1791",
+            "incorrect_answers": ["1823","1814","1845"]
+        },
+        {
+            "question": "Em 1865, quando Maxwell formulou as suas equações, quantas eram?",
+            "correct_answer": "20",
+            "incorrect_answers": ["4","6","13"]
+        },
+        {
+            "question": "Quem foi o 5º/ª convidado/a das NEECtalks?",
+            "correct_answer": "João Caldas",
+            "incorrect_answers": ["Catarina Silva","Núcleo de Jogos do IST","Carlos e Espadinha"]
+        },
+        {
+            "question": "Em que ano nasceu James Maxwell?",
+            "correct_answer": "1831",
+            "incorrect_answers": ["1923","1875","2005"]
+        }
+    ]
+}
