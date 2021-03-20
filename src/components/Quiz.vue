@@ -5,23 +5,23 @@
 		<h1 id="question-number"></h1>
 		<h1 id="count-down-timer"></h1>
 		<hr class="divider" />
-		<button id="start-quiz" @click.prevent="startQuiz">Start Quiz</button>
-		<button id="custom-quiz" @click.prevent="customQuiz">
-			Custom Quiz
-		</button>
-		<form>
+		<div class="form">
+			<button id="start-quiz" @click.prevent="startQuiz(false)">Start Quiz</button>
+			<button id="custom-quiz" @click.prevent="customQuizLayout">
+				Custom Quiz
+			</button>
 			<input id="file-input" type="file" accept=".txt" hidden="true" />
-			<label id="upload-label" for="file-input" hidden="true">
+			<label id="file-label" for="file-input" hidden="true">
 				Upload Your Custom Quiz
 			</label>
-			<input id="submit-input" type="submit" hidden="true" />
-			<label id="submit-label" for="submit-input" hidden="true">
-				Submit
-			</label>
-		</form>
+			<button id="start-custom-quiz" @click="createCustomQuiz" hidden="true">
+				Start Custom Quiz
+			</button>
+		</div>
 
 		<div id="quiz" hidden="true">
-			<h1 v-html="loading ? 'Loading...' : currentQuestion.question"></h1> <!-- here we use the ternary operator to check the loading property -->
+			<h1 v-html="loading ? 'Loading...' : currentQuestion.question"></h1>
+			<!-- here we use the ternary operator to check the loading property -->
 			<form v-if="currentQuestion">
 				<button
 					v-for="answer in currentQuestion.answers"
@@ -45,6 +45,7 @@ export default {
 	data() {
 		// data() function stores state variables
 		return {
+			customQuiz: [],
 			questions: [],
 			loading: true,
 			playing: true,
@@ -67,13 +68,20 @@ export default {
 	// Custom methods of the Vue component
 	methods: {
 		//this method is used to fetch the questions, manipulate them, and store them in the questions array
-		async fetchQuestions() {
+		fetchQuestions(custom) {
 			this.loading = true;
-	
-			let jsonResponse = require("../../public/Quiz.json");
+
+			var jsonResponse;
+
+			if (!custom) {
+				jsonResponse = require("../../public/Quiz.json");
+			}
+			else {
+				jsonResponse = this.customQuiz;
+			}
 			let index = 0; // index is used to identify single answer
 			// manipulate questions
-			let data = jsonResponse.results.map((question) => {
+			let data = (custom ? jsonResponse : jsonResponse.results).map((question) => {
 				// put answers on question into single array
 				question.answers = [
 					question.correct_answer,
@@ -116,16 +124,13 @@ export default {
 			for (let i = 0; i < arr.length; i++) {
 				newdata.push(data[arr[i]]);
 			}
-			
+
 			// put data on questions property
 			this.questions = newdata;
-			
+
 			this.loading = false;
 			document.getElementById("question-number").innerHTML =
-				"Question number " +
-				(this.index + 1) +
-				"/" +
-				this.questions.length;
+				"Question number " + (this.index + 1) + "/" + this.questions.length;
 		},
 		handleButtonClick: function (event) {
 			// find index to identify question object in data
@@ -150,6 +155,7 @@ export default {
 			}
 			// Invoke checkAnswer to check Answer
 			this.checkAnswer(event, index);
+			this.questions[index].userAnswer = null;
 		},
 		checkAnswer: function (event, index) {
 			let question = this.questions[index];
@@ -158,9 +164,7 @@ export default {
 					setTimeout(
 						function () {
 							this.index += 1;
-							document.getElementById(
-								"question-number"
-							).innerHTML =
+							document.getElementById("question-number").innerHTML =
 								"Question number " +
 								(this.index + 1) +
 								"/" +
@@ -172,7 +176,6 @@ export default {
 			}
 
 			if (question.userAnswer === question.correct_answer) {
-
 				// Set class on Button if user answered right, to celebrate right answer with animation joyfulButton
 				event.target.classList.add("rightAnswer");
 
@@ -184,7 +187,6 @@ export default {
 				}
 				this.score++;
 			} else {
-
 				// Mark users answer as wrong answer
 				event.target.classList.add("wrongAnswer");
 				this.questions[index].rightAnswer = false;
@@ -192,9 +194,7 @@ export default {
 
 				// Show right Answer
 				let correctAnswer = this.questions[index].correct_answer;
-				let allButtons = document.querySelectorAll(
-					`[qgroup="${index}"]`
-				);
+				let allButtons = document.querySelectorAll(`[qgroup="${index}"]`);
 				allButtons.forEach(function (button) {
 					if (button.innerHTML === correctAnswer) {
 						button.classList.add("showRightAnswer");
@@ -215,10 +215,11 @@ export default {
 				}, 1000);
 			}
 		},
-		startQuiz() {
-			document.getElementById("start-quiz").hidden = true;
-			document.getElementById("custom-quiz").hidden = true;
+		startQuiz(custom) {
+			document.getElementById(custom ? "start-custom-quiz" : "start-quiz").hidden = true;
+			document.getElementById(custom ? "file-label" : "custom-quiz").hidden = true;
 			document.getElementById("quiz").hidden = false;
+			this.fetchQuestions(custom);
 			this.countDownTimer();
 		},
 		countDownTimer() {
@@ -242,38 +243,52 @@ export default {
 					"Time remaining: " + this.timer;
 			}, 1000);
 		},
-		customQuiz() {
-			const uploadLabel = document.getElementById("upload-label");
-			const submitLabel = document.getElementById("submit-label");
-			const fileInput = document.getElementById("submit-button");
-			const submitInput = document.getElementById("submit-input");
+		customQuizLayout() {
+			document.getElementById("file-label").hidden = false;
+			document.getElementById("start-custom-quiz").hidden = false;
 			document.getElementById("start-quiz").hidden = true;
 			document.getElementById("custom-quiz").hidden = true;
-			uploadLabel.hidden = false;
-			submitLabel.hidden = false;
-			// Ignorem isto, queria verificar a validade do input file type e
-			// mudar o HTML para o nome do novo file, mas não deu ainda (Adrian)
-			fileInput.addEventListener("change", function () {
-				if (fileInput.value) {
-					uploadLabel.innerHTML = fileInput.value.str
-						.split(/(\\|\/)/g)
-						.pop();
-				} else if (fileInput.value.split.pop() != ".txt") {
-					uploadLabel.innerHTML = "Invalid File Type";
-				}
-			});
-			submitInput.addEventListener("click", console.log(fileInput.value));
+		},
+		createCustomQuiz() {
+			const fileInput = document.getElementById('file-input').files[0];
+			var file = new FileReader();
+			file.onload = () => {
+				var lines = file.result.split(/\r\n|\n\r|\n/).filter(function(value) {
+					if (value !== '') return true;
+				});
+				var questions = [];
+				for (const i in lines) {
+					if (i%2 === 0) {
+						var pergunta = lines[i];
+                    }
+                    else {
+						var respostas = lines[i].split(';');
+                        questions.push({
+							question: pergunta,
+                            correct_answer: respostas[0],
+                            incorrect_answers: respostas.slice(1,4)
+                        })
+                    }
+                }
+				this.customQuiz = questions;
+				this.fetchQuestions(true);
+				this.startQuiz(true);
+			}
+			file.readAsText(fileInput);
 		},
 	},
 	// We want the Component to fetch and store the data, when the Component mounts
-	mounted() {
-		this.fetchQuestions();
-	},
 };
 </script>
 
 <style scoped>
 form {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+.form {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
