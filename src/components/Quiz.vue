@@ -5,14 +5,14 @@
 		<h1 id="question-number"></h1>
 		<h1 id="count-down-timer"></h1>
 		<hr class="divider" />
-		<div class="form">
+		<div class="buttons">
 			<button id="start-quiz" @click.prevent="startQuiz(false)">Start Quiz</button>
 			<button id="custom-quiz" @click.prevent="customQuizLayout">
 				Custom Quiz
 			</button>
 			<input id="file-input" type="file" accept=".txt" hidden="true" />
 			<label id="file-label" for="file-input" hidden="true">
-				Upload Your Custom Quiz
+				Upload Custom Quiz
 			</label>
 			<button id="start-custom-quiz" @click="createCustomQuiz" hidden="true">
 				Start Custom Quiz
@@ -21,13 +21,12 @@
 
 		<div id="quiz" hidden="true">
 			<h1 v-html="loading ? 'Loading...' : currentQuestion.question"></h1>
-			<!-- here we use the ternary operator to check the loading property -->
+			<!-- Aqui usamos o operador ternário para verificar se o quiz já está carregado -->
 			<form v-if="currentQuestion">
 				<button
 					v-for="answer in currentQuestion.answers"
-					:index="currentQuestion.key"
+					:qgroup="currentQuestion.key"
 					:key="answer"
-					:qgroup="index"
 					v-html="answer"
 					@click.prevent="handleButtonClick"
 				></button>
@@ -137,10 +136,10 @@ export default {
 			let index = this.index; //event.target.getAttribute("index");
 
 			// innerHTML is polluted with decoded HTML entities e.g ' from &#039;
-			let pollutedUserAnswer = event.target.innerHTML;
+			let userAnswer = event.target.innerHTML;
 
 			// clear from pollution with '
-			let userAnswer = pollutedUserAnswer.replace(/'/, "&#039;");
+			//let userAnswer = pollutedUserAnswer.replace(/'/, "&#039;");
 
 			// set userAnswer on question object in data
 			this.questions[index].userAnswer = userAnswer;
@@ -158,8 +157,11 @@ export default {
 			this.questions[index].userAnswer = null;
 		},
 		checkAnswer: function (event, index) {
+			let correct;
+			console.log(correct);
 			let question = this.questions[index];
 			if (question.userAnswer) {
+				correct = (question.userAnswer === question.correct_answer);
 				if (this.index < this.questions.length - 1) {
 					setTimeout(
 						function () {
@@ -169,13 +171,24 @@ export default {
 								(this.index + 1) +
 								"/" +
 								this.questions.length;
+								event.target.classList.remove("clicked");
+								event.target.classList.remove(correct ? "rightAnswer" : "wrongAnswer");
+								if (correct) {
+									let allButtons = document.querySelectorAll(`[qgroup="${index}"]`);
+									let correctAnswer = this.questions[index].correct_answer;
+									allButtons.forEach(function (button) {
+										if (button.innerHTML === correctAnswer) {
+											button.classList.remove("showRightAnswer");
+										}
+									});
+								}
 						}.bind(this),
 						1000
 					);
 				}
 			}
 
-			if (question.userAnswer === question.correct_answer) {
+			if (correct) {
 				// Set class on Button if user answered right, to celebrate right answer with animation joyfulButton
 				event.target.classList.add("rightAnswer");
 
@@ -288,11 +301,30 @@ form {
 	flex-wrap: wrap;
 	justify-content: center;
 }
-.form {
+.buttons {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
+}
+label {
+	font: 400 13.3333px Arial;
+	font-size: 1.1rem;
+	font-weight: 700;
+	box-sizing: border-box;
+	padding: 1rem;
+	margin: 0.3rem;
+	width: 47%;
+	background-color: rgba(100, 100, 100, 0.3);
+	border: none;
+	border-radius: 0.4rem;
+	box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+label:hover {
+	transform: scale(1.02);
+	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12),
+		0 3px 1px -1px rgba(0, 0, 0, 0.2);
 }
 button {
 	font-size: 1.1rem;
@@ -317,6 +349,43 @@ button:focus {
 }
 button:active:enabled {
 	transform: scale(1.05);
+}
+button.clicked {
+	pointer-events: none;
+}
+button.rightAnswer {
+	animation: flashButton;
+	animation-duration: 700ms;
+	animation-delay: 200ms;
+	animation-iteration-count: 3;
+	animation-timing-function: ease-in-out;
+	color: black;
+	background: linear-gradient(
+		210deg,
+		rgba(0, 178, 72, 0.25),
+		rgba(0, 178, 72, 0.5)
+	);
+}
+button.wrongAnswer {
+	color: black;
+	background: linear-gradient(
+		210deg,
+		rgba(245, 0, 87, 0.25),
+		rgba(245, 0, 87, 0.5)
+	);
+}
+button.showRightAnswer {
+	animation: flashButton;
+	animation-duration: 700ms;
+	animation-delay: 200ms;
+	animation-iteration-count: 2;
+	animation-timing-function: ease-in-out;
+	color: black;
+	background: linear-gradient(
+		210deg,
+		rgba(0, 178, 72, 0.25),
+		rgba(0, 178, 72, 0.5)
+	);
 }
 #quiz-container {
 	text-align: center;
@@ -358,43 +427,6 @@ button:active:enabled {
 		transform: scale(1);
 	}
 }
-button.clicked {
-	pointer-events: none;
-}
-button.rightAnswer {
-	animation: flashButton;
-	animation-duration: 700ms;
-	animation-delay: 200ms;
-	animation-iteration-count: 3;
-	animation-timing-function: ease-in-out;
-	color: black;
-	background: linear-gradient(
-		210deg,
-		rgba(0, 178, 72, 0.25),
-		rgba(0, 178, 72, 0.5)
-	);
-}
-button.wrongAnswer {
-	color: black;
-	background: linear-gradient(
-		210deg,
-		rgba(245, 0, 87, 0.25),
-		rgba(245, 0, 87, 0.5)
-	);
-}
-button.showRightAnswer {
-	animation: flashButton;
-	animation-duration: 700ms;
-	animation-delay: 200ms;
-	animation-iteration-count: 2;
-	animation-timing-function: ease-in-out;
-	color: black;
-	background: linear-gradient(
-		210deg,
-		rgba(0, 178, 72, 0.25),
-		rgba(0, 178, 72, 0.5)
-	);
-}
 h1 {
 	font-size: 1.3rem;
 	padding: 0.7rem;
@@ -405,23 +437,5 @@ h1 {
 	border: 3.7px solid rgba(0, 0, 0, 0.7);
 	border-radius: 3px;
 	box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.3);
-}
-label {
-	font-size: 1.1rem;
-	font-weight: 700;
-	box-sizing: border-box;
-	padding: 1rem;
-	margin: 0.3rem;
-	width: 47%;
-	background-color: rgba(100, 100, 100, 0.3);
-	border: none;
-	border-radius: 0.4rem;
-	box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);
-	cursor: pointer;
-}
-label:hover {
-	transform: scale(1.02);
-	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12),
-		0 3px 1px -1px rgba(0, 0, 0, 0.2);
 }
 </style>

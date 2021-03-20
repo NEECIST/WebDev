@@ -10,7 +10,6 @@
       </div>
 
       <div class="container-right">
-        <a href="http://neecist.org/games">Back</a>
       </div>
     </div>
     <Quiz />
