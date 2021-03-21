@@ -22,7 +22,7 @@
 		<div id="quiz" hidden="true">
 			<h1 v-html="loading ? 'Loading...' : currentQuestion.question"></h1>
 			<!-- Aqui usamos o operador ternário para verificar se o quiz já está carregado -->
-			<form v-if="currentQuestion">
+			<form v-if="currentQuestion" class="buttons">
 				<button
 					v-for="answer in currentQuestion.answers"
 					:qgroup="currentQuestion.key"
@@ -37,7 +37,6 @@
 		<hr class="divider" />
 	</div>
 </template>
-
 
 <script>
 export default {
@@ -350,12 +349,7 @@ export default {
 </script>
 
 <style scoped>
-form {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-}
+/* Display do conjunto de botões */
 .buttons {
 	display: flex;
 	flex-direction: row;
@@ -452,7 +446,6 @@ button.showRightAnswer {
 	font-size: 3rem;
 	padding: 0.5rem;
 	color: #000000;
-	text-align: center;
 }
 #neec-logo {
 	display: block;
@@ -467,7 +460,7 @@ button.showRightAnswer {
 		font-size: 1.8rem;
 	}
 }
-/* Styles in Quiz.vue for UX on user answer */
+/* Estilos do Quiz.vue para UX na resposta no utilizador */
 @keyframes flashButton {
 	0% {
 		opacity: 1;
