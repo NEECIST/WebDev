@@ -27,6 +27,7 @@
 					v-for="answer in currentQuestion.answers"
 					:qgroup="currentQuestion.key"
 					:key="answer"
+					:index = "index"
 					v-html="answer"
 					@click.prevent="handleButtonClick"
 				></button>
@@ -41,32 +42,36 @@
 <script>
 export default {
 	name: "Quiz",
+	// "data()" guarda variáveis de estado
 	data() {
-		// data() function stores state variables
 		return {
 			customQuiz: [],
 			questions: [],
 			loading: true,
 			playing: true,
-			index: 0, // initialize index at 0
+			index: 0,
 			score: 0,
 			timer: 10,
 		};
 	},
+	// as propriedades "computed" designam funções simples a utilizar pelo template
 	computed: {
-		// this computed property returns the current question at the current index
+		// esta função retorna a pergunta apontada pelo index atual
 		currentQuestion() {
 			if (this.questions !== []) {
-				// "this" usually refers to the Vue component instance properties, e.g. "this.questions" points to the
-				return this.questions[this.index]; // questions array in our data() function
+				return this.questions[this.index]; // normalmente no Vue a keyword "this" remete para as variáveis em "data()"
 			}
 			return null;
 		},
 	},
-	// All methods of a Vue component are written on the methods property of the compenent instance
-	// Custom methods of the Vue component
+	// Os métodos de um componente Vue são guardados na propriedade "methods"
 	methods: {
-		//this method is used to fetch the questions, manipulate them, and store them in the questions array
+		/** 
+		 * Este método é usado para retirar, manipular, e guardar as perguntas do questionário
+		 * 
+		 * O parâmetro "custom" indica se o qustionário a ser usado é o questionário "base" ou 
+		 * o questionário indicado pelo utilizador
+		 */
 		fetchQuestions(custom) {
 			this.loading = true;
 
@@ -78,15 +83,17 @@ export default {
 			else {
 				jsonResponse = this.customQuiz;
 			}
-			let index = 0; // index is used to identify single answer
-			// manipulate questions
-			let data = (custom ? jsonResponse : jsonResponse.results).map((question) => {
-				// put answers on question into single array
+			let index = 0;
+
+			// esta função manipula as perguntas do quiz e guarda-as num novo array "data"
+			
+			let data = jsonResponse.results.map((question) => {
+				// aqui coloca-se todas as respostas num único array
 				question.answers = [
 					question.correct_answer,
 					...question.incorrect_answers,
 				];
-				// shuffle question.answers array
+				// as respostas são baralhadas
 				for (let i = question.answers.length - 1; i > 0; i--) {
 					const j = Math.floor(Math.random() * (i + 1));
 					[question.answers[i], question.answers[j]] = [
@@ -94,126 +101,140 @@ export default {
 						question.answers[i],
 					];
 				}
-				// add rightAnswer and key property to each question
-				question.rightAnswer = null;
+				// é adicionada uma propriedade "key" para distinguir as perguntas
 				question.key = index;
 				index++;
 				return question;
 			});
 
+			/* ========= Função de randomização ========= */
+
 			let arr = [];
 			for (let i = 0; i < data.length; i++) {
 				arr.push(i);
 			}
-			var currentIndex = arr.length,
-				temporaryValue,
-				randomIndex;
-			// While there remain elements to shuffle...
-			while (0 !== currentIndex) {
-				// Pick a remaining element...
+			var currentIndex = arr.length;
+			var	temporaryValue;
+			var	randomIndex;
+
+			// Enquanto existirem elementos não baralhados...
+			while (currentIndex !== 0) {
+				// Escolher um elemento qualquer
 				randomIndex = Math.floor(Math.random() * currentIndex);
-				currentIndex -= 1;
-				// And swap it with the current element.
+				currentIndex--;
+				// e trocar com o elemento atual
 				temporaryValue = arr[currentIndex];
 				arr[currentIndex] = arr[randomIndex];
 				arr[randomIndex] = temporaryValue;
 			}
 
+			// substituir os valores de data pelos valores randomizados
 			var newdata = [];
 			for (let i = 0; i < arr.length; i++) {
 				newdata.push(data[arr[i]]);
 			}
 
-			// put data on questions property
+			/* ========= Função de randomização ========= */
+
+			// coloca-se os dados na variável "questions"
 			this.questions = newdata;
 
 			this.loading = false;
-			document.getElementById("question-number").innerHTML =
-				"Question number " + (this.index + 1) + "/" + this.questions.length;
-		},
-		handleButtonClick: function (event) {
-			// find index to identify question object in data
-			let index = this.index; //event.target.getAttribute("index");
 
-			// innerHTML is polluted with decoded HTML entities e.g ' from &#039;
+			// apresenta o contador de perguntas
+			document.getElementById("question-number").innerHTML =
+				"Question number 1/" + this.questions.length;
+		},
+		/**
+		 * Este método ocorre quando o utilizador escolhe uma das opções
+		 * 
+		 * O parâmetro "event" remete para a ação de clicar no botão
+		 */
+		handleButtonClick: function (event) {
+			// encontra o index que descreve a pergunta
+			let index = event.target.getAttribute("index");
+			console.log(index);
+
+			// encontra a resposta que o utilziador escolheu
 			let userAnswer = event.target.innerHTML;
 
-			// clear from pollution with '
-			//let userAnswer = pollutedUserAnswer.replace(/'/, "&#039;");
-
-			// set userAnswer on question object in data
+			// coloca a propriedade da pergunta "userAnswer" com a resposta do utilizador
 			this.questions[index].userAnswer = userAnswer;
 
-			// set class "clicked" on button with userAnswer -> for CSS Styles
-			// disable other sibling buttons
+			// informa que o butão foi carregado -> para o CSS
 			event.target.classList.add("clicked");
-			let allButtons = document.querySelectorAll(`[qgroup="${index}"]`);
+
+			// desliga os outros botões
+			let allButtons = document.querySelectorAll(`[index="${index}"]`);
 			for (let i = 0; i < allButtons.length; i++) {
 				if (allButtons[i] === event.target) continue;
 				allButtons[i].setAttribute("disabled", "disabled");
 			}
-			// Invoke checkAnswer to check Answer
+
+			// invoca a função checkAnswer para verificar a resposta
 			this.checkAnswer(event, index);
-			this.questions[index].userAnswer = null;
 		},
+		/**
+		 * Este método é invocado após a manipulação incial dos botões e verifica se a resposta do utilizador 
+		 * está correta
+		 * 
+		 * Os parâmetros "index" e "event" asseguram a continuidade do método anterior
+		 */
 		checkAnswer: function (event, index) {
-			let correct;
-			console.log(correct);
 			let question = this.questions[index];
 			if (question.userAnswer) {
-				correct = (question.userAnswer === question.correct_answer);
 				if (this.index < this.questions.length - 1) {
 					setTimeout(
 						function () {
+							// atualiza o index atual
 							this.index += 1;
-							document.getElementById("question-number").innerHTML =
-								"Question number " +
-								(this.index + 1) +
-								"/" +
-								this.questions.length;
-								event.target.classList.remove("clicked");
-								event.target.classList.remove(correct ? "rightAnswer" : "wrongAnswer");
-								if (correct) {
-									let allButtons = document.querySelectorAll(`[qgroup="${index}"]`);
-									let correctAnswer = this.questions[index].correct_answer;
-									allButtons.forEach(function (button) {
-										if (button.innerHTML === correctAnswer) {
-											button.classList.remove("showRightAnswer");
-										}
-									});
-								}
+
+							// atualiza o número da questão atual
+							document.getElementById("question-number").innerHTML = 
+								"Question number " + (this.index + 1) + "/" + this.questions.length;
+
+							// ao passar à próxima pergunta, reinicializa os atributos dos botões
+							// isto impede conflitos quando várias perguntas têm respostas iguais a perguntas anteriores
+							let allButtons = document.querySelectorAll(`[index="${index}"]`);
+							for (let i = 0; i < allButtons.length; i++) {
+								allButtons[i].removeAttribute("disabled");
+								allButtons[i].removeAttribute("class");
+							}
+
 						}.bind(this),
 						1000
 					);
 				}
 			}
 
-			if (correct) {
-				// Set class on Button if user answered right, to celebrate right answer with animation joyfulButton
+			if (question.userAnswer === question.correct_answer) {
+				// Se a resposta estiver correta, a classe "rightAnswer" é adicionada -> para CSS
 				event.target.classList.add("rightAnswer");
 
-				// Set rightAnswer on question to true, computed property can track a streak out of 10 questions
-				this.questions[index].rightAnswer = true;
-
+				// quando o utilizador acerta uma pergunta, adiciona 5 segundos ao temporizador
+				// e a sua pontuação aumenta
 				if (this.timer + 5 < 30) {
 					this.timer += 5;
 				}
 				this.score++;
 			} else {
-				// Mark users answer as wrong answer
+				// Se a resposta estiver errada, a classe "wrongAnswer" é adicionada -> para CSS
 				event.target.classList.add("wrongAnswer");
-				this.questions[index].rightAnswer = false;
+
+				// quando o utilizador erra uma pergunta, o temporizador é diminuido 3 segundos
 				this.timer -= 3;
 
-				// Show right Answer
+				// é também adicionada uma classe "showRightAnswer" para mostrar ao utilzador 
+				// qual a reposta certa da pergunta -> para CSS
 				let correctAnswer = this.questions[index].correct_answer;
-				let allButtons = document.querySelectorAll(`[qgroup="${index}"]`);
+				let allButtons = document.querySelectorAll(`[index="${index}"]`);
 				allButtons.forEach(function (button) {
 					if (button.innerHTML === correctAnswer) {
 						button.classList.add("showRightAnswer");
 					}
 				});
 			}
+			// no fim da última pergunta o quiz é removido e mostra-se a pontuação final do utilizador
 			if (this.questions.length - 1 === this.index) {
 				setTimeout(() => {
 					this.playing = false;
@@ -228,16 +249,30 @@ export default {
 				}, 1000);
 			}
 		},
+		/**
+		 * Este método dá ínicio ao quiz quando o utilizador carrega no botão "start-quiz" ou "start-custom-quiz"
+		 * 
+		 * O parâmetro "custom" permite saber se é o quiz base ou um quiz submetido
+		 */
 		startQuiz(custom) {
+			// esconde os elementos que já não são necessários, mostra o quiz
+			// e chama os métodos "fetchQuestions()" e "counDownTimer()"
 			document.getElementById(custom ? "start-custom-quiz" : "start-quiz").hidden = true;
 			document.getElementById(custom ? "file-label" : "custom-quiz").hidden = true;
 			document.getElementById("quiz").hidden = false;
 			this.fetchQuestions(custom);
 			this.countDownTimer();
 		},
+		/**
+		 * Este método dá início ao temporizador do quiz
+		 */
 		countDownTimer() {
 			document.getElementById("count-down-timer").innerHTML =
 				"Time remaining: " + this.timer;
+
+			// A cada intervalo de 1000ms, o contador decresce
+			// se o contador chegar ao fim, acaba o quiz e mostra a pontuação
+			// do jogador
 			let interval = setInterval(() => {
 				this.timer--;
 				if (this.timer <= 0 || !this.playing) {
@@ -256,41 +291,61 @@ export default {
 					"Time remaining: " + this.timer;
 			}, 1000);
 		},
+		/**
+		 * Este método apenas serve para esconder certos elementos e fazer aparecer outros
+		 * quando o utilizador quiser submeter o seu próprio quiz
+		 */
 		customQuizLayout() {
 			document.getElementById("file-label").hidden = false;
 			document.getElementById("start-custom-quiz").hidden = false;
 			document.getElementById("start-quiz").hidden = true;
 			document.getElementById("custom-quiz").hidden = true;
 		},
+		/**
+		 * Este método converte o ficheiro ".txt" submetido pelo utilizador
+		 * para estar de acordo com o formato de quiz lido pelo método
+		 * "fetchQuestions"
+		 */
 		createCustomQuiz() {
 			const fileInput = document.getElementById('file-input').files[0];
+			// é criada um objeto FileReader que irá ler o ficheiro submetido
 			var file = new FileReader();
 			file.onload = () => {
+				var questions = {
+					results: []
+				};
+
+				// aqui procura-se por expressões comuns de fim de linha para poder
+				// separar o conteúdo dos ficheiros por linhas e guardar num array
 				var lines = file.result.split(/\r\n|\n\r|\n/).filter(function(value) {
 					if (value !== '') return true;
 				});
-				var questions = [];
+
+				// por sua vez esse array é de novo separado em perguntas e repostas
+				// e é guardado na variável "questions"
 				for (const i in lines) {
 					if (i%2 === 0) {
 						var pergunta = lines[i];
                     }
                     else {
 						var respostas = lines[i].split(';');
-                        questions.push({
+                        questions.results.push({
 							question: pergunta,
                             correct_answer: respostas[0],
                             incorrect_answers: respostas.slice(1,4)
                         })
                     }
                 }
+				
+				// após isto são chamados os métodos "fetchQuestions" e "startQuiz"
+				// com o parâmetro "custom" verdadeiro
 				this.customQuiz = questions;
 				this.fetchQuestions(true);
 				this.startQuiz(true);
 			}
 			file.readAsText(fileInput);
 		},
-	},
-	// We want the Component to fetch and store the data, when the Component mounts
+	}
 };
 </script>
 
