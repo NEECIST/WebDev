@@ -6,15 +6,22 @@
 		<h1 id="count-down-timer"></h1>
 		<hr class="divider" />
 		<div class="buttons">
-			<button id="start-quiz" @click.prevent="startQuiz(false)">Start Quiz</button>
+			<button id="start-quiz" @click.prevent="startQuiz(false)">
+				Start Quiz
+			</button>
 			<button id="custom-quiz" @click.prevent="customQuizLayout">
 				Custom Quiz
 			</button>
 			<input id="file-input" type="file" accept=".txt" hidden="true" />
+			<!--	UTILIZAMOS UMA LABEL QUE AGE COMO BOTÃO DE UPLOAD, EM VEZ DO FILE INPUT ORIGINAL	-->
 			<label id="file-label" for="file-input" hidden="true">
 				Upload Custom Quiz
 			</label>
-			<button id="start-custom-quiz" @click="createCustomQuiz" hidden="true">
+			<button
+				id="start-custom-quiz"
+				@click="createCustomQuiz"
+				hidden="true"
+			>
 				Start Custom Quiz
 			</button>
 		</div>
@@ -23,14 +30,7 @@
 			<h1 v-html="loading ? 'Loading...' : currentQuestion.question"></h1>
 			<!-- Aqui usamos o operador ternário para verificar se o quiz já está carregado -->
 			<form v-if="currentQuestion" class="buttons">
-				<button
-					v-for="answer in currentQuestion.answers"
-					:qgroup="currentQuestion.key"
-					:key="answer"
-					:index = "index"
-					v-html="answer"
-					@click.prevent="handleButtonClick"
-				></button>
+				<!--	TO DO	-->
 			</form>
 		</div>
 		<h1 id="score" hidden="true"></h1>
@@ -65,10 +65,10 @@ export default {
 	},
 	// Os métodos de um componente Vue são guardados na propriedade "methods"
 	methods: {
-		/** 
+		/**
 		 * Este método é usado para retirar, manipular, e guardar as perguntas do questionário
-		 * 
-		 * O parâmetro "custom" indica se o qustionário a ser usado é o questionário "base" ou 
+		 *
+		 * O parâmetro "custom" indica se o qustionário a ser usado é o questionário "base" ou
 		 * o questionário indicado pelo utilizador
 		 */
 		fetchQuestions(custom) {
@@ -78,14 +78,13 @@ export default {
 
 			if (!custom) {
 				jsonResponse = require("../../public/Quiz.json");
-			}
-			else {
+			} else {
 				jsonResponse = this.customQuiz;
 			}
 			let index = 0;
 
 			// esta função manipula as perguntas do quiz e guarda-as num novo array "data"
-			
+
 			let data = jsonResponse.results.map((question) => {
 				// aqui coloca-se todas as respostas num único array
 				question.answers = [
@@ -113,8 +112,8 @@ export default {
 				arr.push(i);
 			}
 			var currentIndex = arr.length;
-			var	temporaryValue;
-			var	randomIndex;
+			var temporaryValue;
+			var randomIndex;
 
 			// Enquanto existirem elementos não baralhados...
 			while (currentIndex !== 0) {
@@ -146,60 +145,43 @@ export default {
 		},
 		/**
 		 * Este método ocorre quando o utilizador escolhe uma das opções
-		 * 
+		 *
 		 * O parâmetro "event" remete para a ação de clicar no botão
 		 */
 		handleButtonClick: function (event) {
+			/*====TO DO====*/
 			// encontra o index que descreve a pergunta
-			let index = event.target.getAttribute("index");
-			console.log(index);
 
 			// encontra a resposta que o utilziador escolheu
-			let userAnswer = event.target.innerHTML;
 
 			// coloca a propriedade da pergunta "userAnswer" com a resposta do utilizador
-			this.questions[index].userAnswer = userAnswer;
 
-			// informa que o butão foi carregado -> para o CSS
-			event.target.classList.add("clicked");
+			// informa que o botão foi carregado -> para o CSS
 
 			// desliga os outros botões
-			let allButtons = document.querySelectorAll(`[index="${index}"]`);
-			for (let i = 0; i < allButtons.length; i++) {
-				if (allButtons[i] === event.target) continue;
-				allButtons[i].setAttribute("disabled", "disabled");
-			}
 
 			// invoca a função checkAnswer para verificar a resposta
 			this.checkAnswer(event, index);
 		},
 		/**
-		 * Este método é invocado após a manipulação incial dos botões e verifica se a resposta do utilizador 
+		 * Este método é invocado após a manipulação incial dos botões e verifica se a resposta do utilizador
 		 * está correta
-		 * 
+		 *
 		 * Os parâmetros "index" e "event" asseguram a continuidade do método anterior
 		 */
 		checkAnswer: function (event, index) {
-			let question = this.questions[index];
+			let question = {}; /*====TO DO====*/
 			if (question.userAnswer) {
 				if (this.index < this.questions.length - 1) {
 					setTimeout(
 						function () {
 							// atualiza o index atual
-							this.index += 1;
-
+							/*====TO DO====*/
 							// atualiza o número da questão atual
-							document.getElementById("question-number").innerHTML = 
-								"Question number " + (this.index + 1) + "/" + this.questions.length;
-
+							/*====TO DO====*/
 							// ao passar à próxima pergunta, reinicializa os atributos dos botões
 							// isto impede conflitos quando várias perguntas têm respostas iguais a perguntas anteriores
-							let allButtons = document.querySelectorAll(`[index="${index}"]`);
-							for (let i = 0; i < allButtons.length; i++) {
-								allButtons[i].removeAttribute("disabled");
-								allButtons[i].removeAttribute("class");
-							}
-
+							/*====TO DO====*/
 						}.bind(this),
 						1000
 					);
@@ -208,7 +190,7 @@ export default {
 
 			if (question.userAnswer === question.correct_answer) {
 				// Se a resposta estiver correta, a classe "rightAnswer" é adicionada -> para CSS
-				event.target.classList.add("rightAnswer");
+				/*====TO DO====*/
 
 				// quando o utilizador acerta uma pergunta, adiciona 5 segundos ao temporizador
 				// e a sua pontuação aumenta
@@ -218,18 +200,20 @@ export default {
 				this.score++;
 			} else {
 				// Se a resposta estiver errada, a classe "wrongAnswer" é adicionada -> para CSS
-				event.target.classList.add("wrongAnswer");
+				/*====TO DO====*/
 
 				// quando o utilizador erra uma pergunta, o temporizador é diminuido 3 segundos
 				this.timer -= 3;
 
-				// é também adicionada uma classe "showRightAnswer" para mostrar ao utilzador 
+				// é também adicionada uma classe "showRightAnswer" para mostrar ao utilzador
 				// qual a reposta certa da pergunta -> para CSS
 				let correctAnswer = this.questions[index].correct_answer;
-				let allButtons = document.querySelectorAll(`[index="${index}"]`);
+				let allButtons = document.querySelectorAll(
+					`[index="${index}"]`
+				);
 				allButtons.forEach(function (button) {
 					if (button.innerHTML === correctAnswer) {
-						button.classList.add("showRightAnswer");
+						/*====TO DO====*/
 					}
 				});
 			}
@@ -237,27 +221,24 @@ export default {
 			if (this.questions.length - 1 === this.index) {
 				setTimeout(() => {
 					this.playing = false;
-					document.getElementById("quiz").hidden = true;
-					document.getElementById("score").hidden = false;
-					document.getElementById("score").innerHTML =
-						"You got " +
-						this.score +
-						" out of " +
-						this.questions.length +
-						" questions right!";
+					/*====TO DO====*/
 				}, 1000);
 			}
 		},
 		/**
 		 * Este método dá ínicio ao quiz quando o utilizador carrega no botão "start-quiz" ou "start-custom-quiz"
-		 * 
+		 *
 		 * O parâmetro "custom" permite saber se é o quiz base ou um quiz submetido
 		 */
 		startQuiz(custom) {
 			// esconde os elementos que já não são necessários, mostra o quiz
 			// e chama os métodos "fetchQuestions()" e "counDownTimer()"
-			document.getElementById(custom ? "start-custom-quiz" : "start-quiz").hidden = true;
-			document.getElementById(custom ? "file-label" : "custom-quiz").hidden = true;
+			document.getElementById(
+				custom ? "start-custom-quiz" : "start-quiz"
+			).hidden = true;
+			document.getElementById(
+				custom ? "file-label" : "custom-quiz"
+			).hidden = true;
 			document.getElementById("quiz").hidden = false;
 			this.fetchQuestions(custom);
 			this.countDownTimer();
@@ -306,45 +287,46 @@ export default {
 		 * "fetchQuestions"
 		 */
 		createCustomQuiz() {
-			const fileInput = document.getElementById('file-input').files[0];
+			const fileInput = document.getElementById("file-input").files[0];
 			// é criada um objeto FileReader que irá ler o ficheiro submetido
 			var file = new FileReader();
 			file.onload = () => {
 				var questions = {
-					results: []
+					results: [],
 				};
 
 				// aqui procura-se por expressões comuns de fim de linha para poder
 				// separar o conteúdo dos ficheiros por linhas e guardar num array
-				var lines = file.result.split(/\r\n|\n\r|\n/).filter(function(value) {
-					if (value !== '') return true;
-				});
+				var lines = file.result
+					.split(/\r\n|\n\r|\n/)
+					.filter(function (value) {
+						if (value !== "") return true;
+					});
 
 				// por sua vez esse array é de novo separado em perguntas e repostas
 				// e é guardado na variável "questions"
 				for (const i in lines) {
-					if (i%2 === 0) {
+					if (i % 2 === 0) {
 						var pergunta = lines[i];
-                    }
-                    else {
-						var respostas = lines[i].split(';');
-                        questions.results.push({
+					} else {
+						var respostas = lines[i].split(";");
+						questions.results.push({
 							question: pergunta,
-                            correct_answer: respostas[0],
-                            incorrect_answers: respostas.slice(1,4)
-                        })
-                    }
-                }
-				
+							correct_answer: respostas[0],
+							incorrect_answers: respostas.slice(1, 4),
+						});
+					}
+				}
+
 				// após isto são chamados os métodos "fetchQuestions" e "startQuiz"
 				// com o parâmetro "custom" verdadeiro
 				this.customQuiz = questions;
 				this.fetchQuestions(true);
 				this.startQuiz(true);
-			}
+			};
 			file.readAsText(fileInput);
 		},
-	}
+	},
 };
 </script>
 
@@ -377,22 +359,9 @@ label:hover {
 }
 button {
 	font-size: 1.1rem;
-	font-weight: 700;
-	box-sizing: border-box;
-	padding: 1rem;
-	margin: 0.3rem;
-	width: 47%;
-	background-color: rgba(100, 100, 100, 0.3);
-	border: none;
-	border-radius: 0.4rem;
-	box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);
-	cursor: pointer;
+	/*====TO DO====*/
 }
-button:hover {
-	transform: scale(1.02);
-	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12),
-		0 3px 1px -1px rgba(0, 0, 0, 0.2);
-}
+/*====TO DO==== BUTTON HOVER*/
 button:focus {
 	outline: none;
 }
@@ -405,15 +374,7 @@ button.clicked {
 button.rightAnswer {
 	animation: flashButton;
 	animation-duration: 700ms;
-	animation-delay: 200ms;
-	animation-iteration-count: 3;
-	animation-timing-function: ease-in-out;
-	color: black;
-	background: linear-gradient(
-		210deg,
-		rgba(0, 178, 72, 0.25),
-		rgba(0, 178, 72, 0.5)
-	);
+	/*====TO DO====*/
 }
 button.wrongAnswer {
 	color: black;
