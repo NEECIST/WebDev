@@ -57,7 +57,7 @@ export default {
 			playing: true,
 			index: 0,
 			score: 0,
-			timer: 10,
+			timer: 20,
 		};
 	},
 	// as propriedades "computed" designam funções simples a utilizar pelo template
@@ -157,19 +157,19 @@ export default {
 		 */
 		handleButtonClick: function (event) {
 			// encontra o index que descreve a pergunta
-				let index = event.target.getAttribute("index");
+			let index = event.target.getAttribute("index");
 			// encontra a resposta que o utilizador escolheu
-				let userAnswer = event.target.innerHTML;
+			let userAnswer = event.target.innerHTML;
 			// coloca a propriedade da pergunta "userAnswer" com a resposta do utilizador
-				this.questions[index].userAnswer = userAnswer;
+			this.questions[index].userAnswer = userAnswer;
 			// informa que o botão foi carregado -> para o CSS
-				event.target.classList.add("clicked");
+			event.target.classList.add("clicked");
 			// desliga os outros botões
-				let allButtons = document.querySelectorAll(`[index="${index}"]`);
-				for (let i = 0; i < allButtons.length; i++){
-					if (allButtons[i] === event.target) continue;
-					allButtons[i].setAttribute("disabled", "disabled");
-				}
+			let allButtons = document.querySelectorAll(`[index="${index}"]`);
+			for (let i = 0; i < allButtons.length; i++) {
+				if (allButtons[i] === event.target) continue;
+				allButtons[i].setAttribute("disabled", "disabled");
+			}
 			// invoca a função checkAnswer para verificar a resposta
 			this.checkAnswer(event, index);
 		},
@@ -189,16 +189,23 @@ export default {
 							this.index += 1;
 
 							// atualiza o número da questão atual
-							document.getElementById("question-number").innerHTML = "Question number " + (this.index + 1) + "/" + this.questions.length;
-							
+							document.getElementById(
+								"question-number"
+							).innerHTML =
+								"Question number " +
+								(this.index + 1) +
+								"/" +
+								this.questions.length;
+
 							// ao passar à próxima pergunta, reinicializa os atributos dos botões
 							// isto impede conflitos quando várias perguntas têm respostas iguais a perguntas anteriores
-							let allButtons = document.querySelectorAll(`[index="${index}"]`);
-							for (let i = 0; i < allButtons.length; i++){
+							let allButtons = document.querySelectorAll(
+								`[index="${index}"]`
+							);
+							for (let i = 0; i < allButtons.length; i++) {
 								allButtons[i].removeAttribute("disabled");
 								allButtons[i].removeAttribute("class");
 							}
-
 						}.bind(this),
 						1000
 					);
@@ -240,12 +247,12 @@ export default {
 					this.playing = false;
 					document.getElementById("quiz").hidden = true;
 					document.getElementById("score").hidden = false;
-					document.getElementById("score").innerHTML = 
-						"You got " 
-						+ this.score 
-						+ " out of " 
-						+ this.questions.length 
-						+ " questions right!";
+					document.getElementById("score").innerHTML =
+						"You got " +
+						this.score +
+						" out of " +
+						this.questions.length +
+						" questions right!";
 				}, 1000);
 			}
 		},
@@ -383,9 +390,24 @@ label:hover {
 }
 button {
 	font-size: 1.1rem;
-	/*====TO DO====*/
+	font-weight: 700;
+	box-sizing: border-box;
+	padding: 1rem;
+	margin: 0.3rem;
+	width: 47%;
+	background-color: rgba(100, 100, 100, 0.3);
+	border: none;
+	border-radius: 0.4rem;
+	box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.2);
+	cursor: pointer;
 }
-/*====TO DO==== BUTTON HOVER*/
+
+button:hover {
+	transform: scale(1.02);
+	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12),
+		0 3px 1px -1px rgba(0, 0, 0, 0.2);
+}
+
 button:focus {
 	outline: none;
 }
@@ -398,7 +420,15 @@ button.clicked {
 button.rightAnswer {
 	animation: flashButton;
 	animation-duration: 700ms;
-	/*====TO DO====*/
+	animation-delay: 200ms;
+	animation-iteration-count: 3;
+	animation-timing-function: ease-in-out;
+	color: black;
+	background: linear-gradient(
+		210deg,
+		rgba(0, 178, 72, 0.25),
+		rgba(0, 178, 72, 0.5)
+	);
 }
 button.wrongAnswer {
 	color: black;
